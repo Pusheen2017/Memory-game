@@ -1,2 +1,3 @@
-var catcraft = 10
-catcraft
+var catcraft = 10;
+catcraft;
+

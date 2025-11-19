@@ -1,41 +1,51 @@
 import pygame, os, random
 from enum import Enum
 from pygame import color as color
+#Memory game
 
 class BUTTONS(Enum):
     RED = 1
     GREEN = 2
     BLUE = 3
     YELLOW = 4  
+    STARTBUTTON = 5
 
 ppos = {
     BUTTONS.RED: (55,45),
     BUTTONS.GREEN: (122,47),
     BUTTONS.BLUE: (122,120),
-    BUTTONS.YELLOW: (55,120)
+    BUTTONS.YELLOW: (55,120),
+    BUTTONS.STARTBUTTON: (80,105)
 }
 
 ppath = {
     BUTTONS.RED: ("podświetlNaCzerwono.png"),
     BUTTONS.GREEN: ("podświetlNaZielono.png"),
     BUTTONS.BLUE: ("podświetlNaNiebiesko.png"),
-    BUTTONS.YELLOW: ("podświetlNaŻółto.png")
+    BUTTONS.YELLOW: ("podświetlNaŻółto.png"),
+    BUTTONS.STARTBUTTON: ("startbutton.png")
 }
 
 class Gra:
     def __init__(self):
-        self.running = True #flaga działania gry
+        self.running = True #flaga działania programu
+        self.started = False #flaga aktywnej gry
         self.screen = pygame.display.set_mode((286, 249)) #okno gry
         pygame.display.set_caption("Memory Game")
         self.clock = pygame.time.Clock()
+        #img_path = os.path.join(os.path.dirname(__file__), "startbutton.png")
+        #image = pygame.image.load(img_path).convert_alpha()
+        #self.screen.blit(image, (0, 0))
+        #pygame.display.flip()
         pygame.fastevent.init()
-        self.music()
+        #self.music()
+       
 
     def drawBase(self):
         img_path = os.path.join(os.path.dirname(__file__), "memo.png")
         image = pygame.image.load(img_path).convert_alpha()
         self.screen.blit(image, (0, 0))
-        pygame.display.flip()
+        #pygame.display.flip()
         
     def drawSelected(self, button: BUTTONS):
         self.drawBase()
@@ -50,7 +60,18 @@ class Gra:
    
                     
     def events(self):
-        self.eventsWithTime(1)
+        self.eventsWithTime0(1)
+    
+    def eventsWithTime0(self, sleepTime): #sprawdzanie przycisków na czas
+        strartTime = pygame.time.get_ticks()
+        while self.running and pygame.time.get_ticks() - strartTime < sleepTime:
+            pygame.fastevent.init()
+            event = pygame.fastevent.poll()
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
     
     def music(self):
         # losowanie niejednorazowe przy starcie — drukujemy każdą wartość
@@ -75,7 +96,7 @@ class Gra:
                 self.drawSelected(BUTTONS.YELLOW)
             self.eventsWithTime(1000)
     
-    def eventsWithTime(self, sleepTime):
+    def eventsWithTime(self, sleepTime): #sprawdzanie przycisków na czas
         strartTime = pygame.time.get_ticks()
         while self.running and pygame.time.get_ticks() - strartTime < sleepTime:
             pygame.fastevent.init()
@@ -101,9 +122,16 @@ class Gra:
     #główna pętla programu
     def run(self):
         while self.running:
+            if self.started: #gra uruchomiona
+                pass
+                #główna pętla gry, losowanie sekwencji, sprawdzanie czy gracz dobrze powtórzył sekwencję
+            else: #gra nie uruchomiona
+                self.drawSelected(BUTTONS.STARTBUTTON)
+                #sprawdzać czy kliknięto start
+            
             self.clock.tick(60)
-            self.eventsWithTime(1000)
-            self.drawBase()
+            #self.eventsWithTime(1000)
+            #self.drawBase()
             self.events()  
 
 if __name__ == "__main__":
