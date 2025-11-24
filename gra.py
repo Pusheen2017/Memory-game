@@ -81,7 +81,7 @@ class Gra:
         for _ in range(10):
             n = random.randint(1, 4)
             pos = (int, int)
-            #print("działa")
+            print("działa")
             if n == 1:
                 print("Wylosowano 1")
                 self.drawSelected(BUTTONS.RED)
@@ -118,16 +118,37 @@ class Gra:
                 elif event.key == pygame.K_s:
                     print("Naciśnięto S")
                     self.drawSelected(BUTTONS.YELLOW)
+    
+    def eventsMouseStartClick(self):
+        while self.running:
+            pygame.fastevent.init()
+            event = pygame.fastevent.poll()
+            if event.type == pygame.QUIT: #zamknięto okno
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE: #klawisz escape
+                    self.running = False
+            elif event.type == pygame.MOUSEBUTTONUP:  #klinięty przycisk i puszczony
+                pos = pygame.mouse.get_pos() #współrzędne kursora (x,y)
+                butonPos = ppos[BUTTONS.STARTBUTTON]
+ 
+                rect = pygame.Rect(butonPos[0], butonPos[1],91,29) #poprawić żeby nie wpisywać wymiarów ręcznie
+                if rect.collidepoint(pos):
+                    self.started = True
+                    return
+                    
                     
     #główna pętla programu
     def run(self):
         while self.running:
             if self.started: #gra uruchomiona
-                pass
+                self.music()
+                self.started = False
                 #główna pętla gry, losowanie sekwencji, sprawdzanie czy gracz dobrze powtórzył sekwencję
             else: #gra nie uruchomiona
                 self.drawSelected(BUTTONS.STARTBUTTON)
                 #sprawdzać czy kliknięto start
+                self.eventsMouseStartClick()
             
             self.clock.tick(60)
             #self.eventsWithTime(1000)
