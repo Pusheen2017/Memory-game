@@ -1,6 +1,6 @@
-import pygame, os, random
-from enum import Enum
-from pygame import color as color
+import pygame, os, random;from enum import Enum;from pygame import color as color#importuje potrzebne moduły
+
+
 #Memory game
 
 class BUTTONS(Enum):
@@ -27,9 +27,14 @@ ppath = {
 }
 
 class Gra:
+    RandomSequence=[]#inicjalizuje listę globalną RandomSequence
+    PlayerSequence=[]#inicjalizuje listę globalną PlayerSequence
     def __init__(self):
+        
+        
         self.running = True #flaga działania programu
         self.started = False #flaga aktywnej gry
+        self.ControlsActive=False
         self.screen = pygame.display.set_mode((286, 249)) #okno gry
         pygame.display.set_caption("Memory Game")
         self.clock = pygame.time.Clock()
@@ -54,11 +59,7 @@ class Gra:
         self.screen.blit(image, ppos[button])
         pygame.display.flip()
 
-    #def run_loop(self):
-    #    pygame.time.delay(500) #5000 milisekund = 5 sekund swyczajnych
-    
    
-                    
     def events(self):
         self.eventsWithTime0(1)
     
@@ -77,27 +78,31 @@ class Gra:
         # losowanie niejednorazowe przy starcie — drukujemy każdą wartość
         #img_path = os.path.join(self.BASE_DIR, "memo.png")
         #image = pygame.image.load(img_path).convert_alpha()
-        
         for _ in range(10):
             n = random.randint(1, 4)
             pos = (int, int)
-            print("działa")
+            
             if n == 1:
                 print("Wylosowano 1")
+                self.RandomSequence.insert(0,"red")
                 self.drawSelected(BUTTONS.RED)
             elif n == 2:
                 print("Wylosowano 2")
+                self.RandomSequence.insert(0,"green")
                 self.drawSelected(BUTTONS.GREEN)
             elif n == 3:
                 print("Wylosowano 3")
+                self.RandomSequence.insert(0,"blue")
                 self.drawSelected(BUTTONS.BLUE)
             else:
                 print("Wylosowano 4")
+                self.RandomSequence.insert(0,"yellow")
                 self.drawSelected(BUTTONS.YELLOW)
             self.eventsWithTime(1000)
     
     def eventsWithTime(self, sleepTime): #sprawdzanie przycisków na czas
         strartTime = pygame.time.get_ticks()
+        
         while self.running and pygame.time.get_ticks() - strartTime < sleepTime:
             pygame.fastevent.init()
             event = pygame.fastevent.poll()
@@ -108,16 +113,22 @@ class Gra:
                     self.running = False
                 elif event.key == pygame.K_w:#Jeżeli klawisz w naciśnięty
                     print("Naciśnięto W")
+                    self.PlayerSequence.insert(0,"red")
                     self.drawSelected(BUTTONS.RED)
                 elif event.key == pygame.K_d:
                     print("Naciśnięto D")
+                    self.PlayerSequence.insert(0,"blue")
                     self.drawSelected(BUTTONS.BLUE)
                 elif event.key == pygame.K_a:
                     print("Naciśnięto A")
+                    self.PlayerSequence.insert(0,"green")
                     self.drawSelected(BUTTONS.GREEN)
                 elif event.key == pygame.K_s:
                     print("Naciśnięto S")
+                    self.PlayerSequence.insert(0,"yellow")
                     self.drawSelected(BUTTONS.YELLOW)
+    def CheckSequence(self):
+        pass
     
     def eventsMouseStartClick(self):
         while self.running:
@@ -142,7 +153,12 @@ class Gra:
     def run(self):
         while self.running:
             if self.started: #gra uruchomiona
-                self.music()
+                self.music()#losowanie sekwencji
+                if self.ControlsActive:
+                    self.eventsWithTime0
+                else:
+                    pass
+                
                 self.started = False
                 #główna pętla gry, losowanie sekwencji, sprawdzanie czy gracz dobrze powtórzył sekwencję
             else: #gra nie uruchomiona
