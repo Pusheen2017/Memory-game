@@ -3,7 +3,7 @@ import pygame, os, random;from enum import Enum;from pygame import color as colo
 
 #Memory game
 
-class BUTTONS(Enum):
+class BUTTON(Enum):
     RED = 1
     GREEN = 2
     BLUE = 3
@@ -11,27 +11,28 @@ class BUTTONS(Enum):
     STARTBUTTON = 5
 
 ppos = {
-    BUTTONS.RED: (55,45),
-    BUTTONS.GREEN: (122,47),
-    BUTTONS.BLUE: (122,120),
-    BUTTONS.YELLOW: (55,120),
-    BUTTONS.STARTBUTTON: (80,105)
+    BUTTON.RED: (55,45),
+    BUTTON.GREEN: (122,47),
+    BUTTON.BLUE: (122,120),
+    BUTTON.YELLOW: (55,120),
+    BUTTON.STARTBUTTON: (80,105)
 }
 
 ppath = {
-    BUTTONS.RED: ("podświetlNaCzerwono.png"),
-    BUTTONS.GREEN: ("podświetlNaZielono.png"),
-    BUTTONS.BLUE: ("podświetlNaNiebiesko.png"),
-    BUTTONS.YELLOW: ("podświetlNaŻółto.png"),
-    BUTTONS.STARTBUTTON: ("startbutton.png")
+    BUTTON.RED: ("podświetlNaCzerwono.png"),
+    BUTTON.GREEN: ("podświetlNaZielono.png"),
+    BUTTON.BLUE: ("podświetlNaNiebiesko.png"),
+    BUTTON.YELLOW: ("podświetlNaŻółto.png"),
+    BUTTON.STARTBUTTON: ("startbutton.png")
 }
 
 class Gra:
-    RandomSequence=[]#inicjalizuje listę globalną RandomSequence
-    PlayerSequence=[]#inicjalizuje listę globalną PlayerSequence
+    RandomSequence=list[BUTTON] #inicjalizuje listę globalną RandomSequence
+    PlayerSequence=list[BUTTON]#inicjalizuje listę globalną PlayerSequence
+         
     def __init__(self):
-        
-        
+        self.RandomSequence = []
+        self.PlayerSequence = []
         self.running = True #flaga działania programu
         self.started = False #flaga aktywnej gry
         self.ControlsActive=False
@@ -52,7 +53,7 @@ class Gra:
         self.screen.blit(image, (0, 0))
         #pygame.display.flip()
         
-    def drawSelected(self, button: BUTTONS):
+    def drawSelected(self, button: BUTTON):
         self.drawBase()
         img_path = os.path.join(os.path.dirname(__file__), ppath[button])
         image = pygame.image.load(img_path).convert_alpha()
@@ -79,27 +80,16 @@ class Gra:
         #img_path = os.path.join(self.BASE_DIR, "memo.png")
         #image = pygame.image.load(img_path).convert_alpha()
         for _ in range(10):
-            n = random.randint(1, 4)
-            pos = (int, int)
             
-            if n == 1:
-                print("Wylosowano 1")
-                self.RandomSequence.insert(0,"red")
-                self.drawSelected(BUTTONS.RED)
-            elif n == 2:
-                print("Wylosowano 2")
-                self.RandomSequence.insert(0,"green")
-                self.drawSelected(BUTTONS.GREEN)
-            elif n == 3:
-                print("Wylosowano 3")
-                self.RandomSequence.insert(0,"blue")
-                self.drawSelected(BUTTONS.BLUE)
-            else:
-                print("Wylosowano 4")
-                self.RandomSequence.insert(0,"yellow")
-                self.drawSelected(BUTTONS.YELLOW)
+            n = random.randint(1, 4) #RANDOM BUTTON
+            b = BUTTON(n)
+            self.RandomSequence.append(b)
+            self.drawSelected(b)
+            print(self.RandomSequence)
+            pos = (int, int)
+
             self.eventsWithTime(1000)
-    
+        self.ControlsActive=True
     def eventsWithTime(self, sleepTime): #sprawdzanie przycisków na czas
         strartTime = pygame.time.get_ticks()
         
@@ -113,22 +103,24 @@ class Gra:
                     self.running = False
                 elif event.key == pygame.K_w:#Jeżeli klawisz w naciśnięty
                     print("Naciśnięto W")
-                    self.PlayerSequence.insert(0,"red")
-                    self.drawSelected(BUTTONS.RED)
+                    self.PlayerSequence.append("red")
+                    self.drawSelected(BUTTON.RED)
                 elif event.key == pygame.K_d:
                     print("Naciśnięto D")
-                    self.PlayerSequence.insert(0,"blue")
-                    self.drawSelected(BUTTONS.BLUE)
+                    self.PlayerSequence.append("blue")
+                    self.drawSelected(BUTTON.BLUE)
                 elif event.key == pygame.K_a:
                     print("Naciśnięto A")
-                    self.PlayerSequence.insert(0,"green")
-                    self.drawSelected(BUTTONS.GREEN)
+                    self.PlayerSequence.append("green")
+                    self.drawSelected(BUTTON.GREEN)
                 elif event.key == pygame.K_s:
                     print("Naciśnięto S")
-                    self.PlayerSequence.insert(0,"yellow")
-                    self.drawSelected(BUTTONS.YELLOW)
-    def CheckSequence(self):
-        pass
+                    self.PlayerSequence.append("yellow")
+                    self.drawSelected(BUTTON.YELLOW)
+    
+    def CheckSequence(self,pos : int):
+        return self.RandomSequence[pos] == self.PlayerSequence[pos]
+            
     
     def eventsMouseStartClick(self):
         while self.running:
@@ -141,7 +133,7 @@ class Gra:
                     self.running = False
             elif event.type == pygame.MOUSEBUTTONUP:  #klinięty przycisk i puszczony
                 pos = pygame.mouse.get_pos() #współrzędne kursora (x,y)
-                butonPos = ppos[BUTTONS.STARTBUTTON]
+                butonPos = ppos[BUTTON.STARTBUTTON]
  
                 rect = pygame.Rect(butonPos[0], butonPos[1],91,29) #poprawić żeby nie wpisywać wymiarów ręcznie
                 if rect.collidepoint(pos):
@@ -162,7 +154,7 @@ class Gra:
                 self.started = False
                 #główna pętla gry, losowanie sekwencji, sprawdzanie czy gracz dobrze powtórzył sekwencję
             else: #gra nie uruchomiona
-                self.drawSelected(BUTTONS.STARTBUTTON)
+                self.drawSelected(BUTTON.STARTBUTTON)
                 #sprawdzać czy kliknięto start
                 self.eventsMouseStartClick()
             
