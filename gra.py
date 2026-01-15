@@ -75,7 +75,7 @@ class Gra:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
     
-    def music(self):
+    def random(self):
         # losowanie niejednorazowe przy starcie — drukujemy każdą wartość
         #img_path = os.path.join(self.BASE_DIR, "memo.png")
         #image = pygame.image.load(img_path).convert_alpha()
@@ -104,6 +104,7 @@ class Gra:
                 elif event.key == pygame.K_w:#Jeżeli klawisz w naciśnięty
                     print("Naciśnięto W")
                     self.PlayerSequence.append("red")
+                    print("\a")
                     self.drawSelected(BUTTON.RED)
                 elif event.key == pygame.K_d:
                     print("Naciśnięto D")
@@ -143,9 +144,11 @@ class Gra:
                     
     #główna pętla programu
     def run(self):
+        self.RandomSequence = []
+        self.PlayerSequence = []
         while self.running:
             if self.started: #gra uruchomiona
-                self.music()#losowanie sekwencji
+                self.random()#losowanie sekwencji
                 if self.ControlsActive:
                     self.eventsWithTime0
                 else:
