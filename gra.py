@@ -118,6 +118,7 @@ class Gra:
                     print("Naciśnięto S")
                     self.PlayerSequence.append("yellow")
                     self.drawSelected(BUTTON.YELLOW)
+        self.ControlsActive=True
     
     def CheckSequence(self,pos : int):
         return self.RandomSequence[pos] == self.PlayerSequence[pos]
