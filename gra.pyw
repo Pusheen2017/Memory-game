@@ -39,14 +39,13 @@ class Gra:#Główna klasa gry
         self.started = False #flaga aktywnej gry
         self.ControlsActive=False
         self.screen = pygame.display.set_mode((286, 249)) #okno gry
-        pygame.display.set_caption("Memory Game")#
-        self.clock = pygame.time.Clock()
-        #img_path = os.path.join(os.path.dirname(__file__), "startbutton.png")
-        #image = pygame.image.load(img_path).convert_alpha()
-        #self.screen.blit(image, (0, 0))
-        #pygame.display.flip()
+        pygame.display.set_caption("Memory Game")#ustawienie napisu
+        self.clock = pygame.time.Clock()#zegar, do FPS-óW
+        img_path = os.path.join(os.path.dirname(__file__), "startbutton.png")
+        image = pygame.image.load(img_path).convert_alpha()
+        self.screen.blit(image, (0, 0))#Aktualizacja ekranu
+        pygame.display.flip()
         pygame.fastevent.init()
-        #self.music()
        
 
     def drawBase(self):#Rysuj bazę, bez podświetlenia
@@ -78,6 +77,7 @@ class Gra:#Główna klasa gry
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
+                    sys.exit()
     
     def random(self):
         # losowanie niejednorazowe przy starcie — drukujemy każdą wartość
@@ -85,20 +85,21 @@ class Gra:#Główna klasa gry
         #image = pygame.image.load(img_path).convert_alpha()
         for _ in range(10):
             
-            n = random.randint(1, 4) #RANDOM BUTTON
-            b = BUTTON(n)
-            self.RandomSequence.append(b)
-            self.drawSelected(b)
-            print(self.RandomSequence)
-            pos = (int, int)
+            n = random.randint(1, 4) #Losowy przycisk
+            b = BUTTON(n)#ustawianie zmiennej przycisku na elemnt z enumeratora
+            self.RandomSequence.append(b)#dodanie przycisku do sekwencji loswej
+            self.drawSelected(b)#narysowanie wylosowanego przycisku
+            print("\a")#TODO:zamienić na dźwięki
+            print(self.RandomSequence)#drukowanie sekwencji, TODO: usunąć
+            pos = (int, int)#definiuj pozycję
 
             self.checkButtons()
-        self.ControlsActive=True
-    def checkButtons(self, sleepTime=1000): #sprawdzanie przycisków na czas
-        strartTime = pygame.time.get_ticks()
+        self.ControlsActive=True#czy sterowanie jest aktywne
+    def checkButtons(self, sleepTime=500): #sprawdzanie przycisków na czas
+        strartTime = pygame.time.get_ticks()#uzyskanie wartości klatek na sekundę
         
         while self.running and pygame.time.get_ticks() - strartTime < sleepTime:
-            pygame.fastevent.init()
+            pygame.fastevent.init()#inicjaizacja fasteventu
             event = pygame.fastevent.poll()
             if event.type == pygame.QUIT:
                 self.running = False
@@ -134,9 +135,11 @@ class Gra:#Główna klasa gry
             event = pygame.fastevent.poll()
             if event.type == pygame.QUIT: #zamknięto okno
                 self.running = False
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: #klawisz escape
                     self.running = False
+                    sys.exit()
             elif event.type == pygame.MOUSEBUTTONUP:  #klinięty przycisk i puszczony
                 pos = pygame.mouse.get_pos() #współrzędne kursora (x,y)
                 butonPos = ppos[BUTTON.STARTBUTTON]
@@ -171,9 +174,9 @@ class Gra:#Główna klasa gry
                 self.eventsMouseStartClick()
                 
             
-            self.clock.tick(60)
-            #self.eventsWithTime(1000)
-            #self.drawBase()
+            self.clock.tick(60)#Ustawiienie kaltek na sekundę na 60
+            self.random()
+            self.drawBase()
             self.events()  
 
 if __name__ == "__main__":
