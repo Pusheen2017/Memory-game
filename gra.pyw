@@ -159,7 +159,7 @@ class Gra:#Główna klasa gry
             if self.started: #gra uruchomiona
                 self.random()#losowanie sekwencji
                 self.checkButtons()
-                for x in range(1,10):
+                for x in range(1,10):#spawdzanie pzycisków
                     if self.checkButtons:
                         pass
                     else:
@@ -175,8 +175,8 @@ class Gra:#Główna klasa gry
                 
             
             self.clock.tick(60)#Ustawiienie kaltek na sekundę na 60
-            self.random()
-            self.drawBase()
+            self.random()#losownie
+            self.drawBase()#rysowanie bazowego obrazu
             self.events()  
 
 if __name__ == "__main__":
