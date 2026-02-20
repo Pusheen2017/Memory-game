@@ -1,16 +1,16 @@
-import pygame, os, random;from enum import Enum;from pygame import color as color#importuje potrzebne moduły
+import pygame, os, random, time,sys;from enum import Enum;from pygame import color as color#importuje potrzebne moduły
 
 
 #Memory game
 
-class BUTTON(Enum):
+class BUTTON(Enum):#Enumeratory
     RED = 1
     GREEN = 2
     BLUE = 3
     YELLOW = 4  
     STARTBUTTON = 5
 
-ppos = {
+ppos = {#Pozycje przycisków
     BUTTON.RED: (55,45),
     BUTTON.GREEN: (122,47),
     BUTTON.BLUE: (122,120),
@@ -18,7 +18,7 @@ ppos = {
     BUTTON.STARTBUTTON: (80,105)
 }
 
-ppath = {
+ppath = {#Ścieżki do plików przycisków
     BUTTON.RED: ("podświetlNaCzerwono.png"),
     BUTTON.GREEN: ("podświetlNaZielono.png"),
     BUTTON.BLUE: ("podświetlNaNiebiesko.png"),
@@ -26,18 +26,20 @@ ppath = {
     BUTTON.STARTBUTTON: ("startbutton.png")
 }
 
-class Gra:
+class Gra:#Główna klasa gry
     RandomSequence=list[BUTTON] #inicjalizuje listę globalną RandomSequence
     PlayerSequence=list[BUTTON]#inicjalizuje listę globalną PlayerSequence
          
-    def __init__(self):
+    def __init__(self):#Funkcja inicjalizująca
+        #Tworzenie list sekwencji
         self.RandomSequence = []
         self.PlayerSequence = []
+        #Konfiguracja
         self.running = True #flaga działania programu
         self.started = False #flaga aktywnej gry
         self.ControlsActive=False
         self.screen = pygame.display.set_mode((286, 249)) #okno gry
-        pygame.display.set_caption("Memory Game")
+        pygame.display.set_caption("Memory Game")#
         self.clock = pygame.time.Clock()
         #img_path = os.path.join(os.path.dirname(__file__), "startbutton.png")
         #image = pygame.image.load(img_path).convert_alpha()
@@ -47,13 +49,14 @@ class Gra:
         #self.music()
        
 
-    def drawBase(self):
+    def drawBase(self):#Rysuj bazę, bez podświetlenia
         img_path = os.path.join(os.path.dirname(__file__), "memo.png")
         image = pygame.image.load(img_path).convert_alpha()
         self.screen.blit(image, (0, 0))
         #pygame.display.flip()
         
-    def drawSelected(self, button: BUTTON):
+    def drawSelected(self, button: BUTTON):#Podświetl wybrany przycisk
+        time.sleep(1)
         self.drawBase()
         img_path = os.path.join(os.path.dirname(__file__), ppath[button])
         image = pygame.image.load(img_path).convert_alpha()
@@ -71,6 +74,7 @@ class Gra:
             event = pygame.fastevent.poll()
             if event.type == pygame.QUIT:
                 self.running = False
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
@@ -88,9 +92,9 @@ class Gra:
             print(self.RandomSequence)
             pos = (int, int)
 
-            self.eventsWithTime(1000)
+            self.checkButtons()
         self.ControlsActive=True
-    def eventsWithTime(self, sleepTime): #sprawdzanie przycisków na czas
+    def checkButtons(self, sleepTime=1000): #sprawdzanie przycisków na czas
         strartTime = pygame.time.get_ticks()
         
         while self.running and pygame.time.get_ticks() - strartTime < sleepTime:
@@ -136,6 +140,7 @@ class Gra:
             elif event.type == pygame.MOUSEBUTTONUP:  #klinięty przycisk i puszczony
                 pos = pygame.mouse.get_pos() #współrzędne kursora (x,y)
                 butonPos = ppos[BUTTON.STARTBUTTON]
+                self.ControlsActive=True
  
                 rect = pygame.Rect(butonPos[0], butonPos[1],91,29) #poprawić żeby nie wpisywać wymiarów ręcznie
                 if rect.collidepoint(pos):
@@ -150,17 +155,21 @@ class Gra:
         while self.running:
             if self.started: #gra uruchomiona
                 self.random()#losowanie sekwencji
-                if self.ControlsActive:
-                    self.eventsWithTime0
-                else:
-                    pass
-                
+                self.checkButtons()
+                for x in range(1,10):
+                    if self.checkButtons:
+                        pass
+                    else:
+                        print("Game over!")
+                        self.running=False
+
                 self.started = False
                 #główna pętla gry, losowanie sekwencji, sprawdzanie czy gracz dobrze powtórzył sekwencję
             else: #gra nie uruchomiona
                 self.drawSelected(BUTTON.STARTBUTTON)
                 #sprawdzać czy kliknięto start
                 self.eventsMouseStartClick()
+                
             
             self.clock.tick(60)
             #self.eventsWithTime(1000)
